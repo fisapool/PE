@@ -1,0 +1,22 @@
+runtime: nodejs18
+
+service: proxy-dashboard
+
+handlers:
+  - url: /static
+    static_dir: build/static
+    secure: always
+
+  - url: /(.*\.(json|ico|js|css))$
+    static_files: build/\1
+    upload: build/.*\.(json|ico|js|css)$
+    secure: always
+
+  - url: /.*
+    static_files: build/index.html
+    upload: build/index.html
+    secure: always
+
+env_variables:
+  NODE_ENV: 'production'
+  FIREBASE_PROJECT_ID: 'proxyethica' 
