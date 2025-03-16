@@ -1,0 +1,61 @@
+{
+  "name": "proxyethica",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "start:client": "cross-env MODE=client node src/index.js",
+    "dev:server": "nodemon src/index.js",
+    "test": "jest --config jest.config.js",
+    "test:watch": "jest --watch --config jest.config.js",
+    "test:coverage": "jest --coverage --config jest.config.js",
+    "lint": "eslint src/ tests/",
+    "cypress": "cypress open",
+    "cypress:run": "cypress run",
+    "start:test": "cross-env NODE_ENV=test node src/index.js",
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --watch --config webpack.config.js",
+    "dev": "webpack --mode development"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Ethical residential proxy network",
+  "dependencies": {
+    "axios": "^1.8.3",
+    "dotenv": "^16.4.7",
+    "eventsource": "^3.0.5",
+    "express": "^4.21.2",
+    "firebase": "^9.22.0",
+    "http-proxy-agent": "^7.0.2",
+    "https-proxy-agent": "^7.0.6",
+    "jsonwebtoken": "^9.0.2",
+    "socks-proxy-agent": "^8.0.5",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/cypress": "^0.1.6",
+    "axios-mock-adapter": "^2.1.0",
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "commander": "^13.1.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "cypress": "^14.2.0",
+    "eslint": "^9.22.0",
+    "html-loader": "^4.2.0",
+    "html-webpack-plugin": "^5.5.1",
+    "jest": "^29.7.0",
+    "nock": "^14.0.1",
+    "nodemon": "^3.1.9",
+    "ora": "^8.2.0",
+    "style-loader": "^3.3.2",
+    "webpack": "^5.82.1",
+    "webpack-cli": "^5.1.1"
+  }
+}

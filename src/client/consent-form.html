@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProxyEthica - Connection Sharing Consent</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    .consent-box {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .highlight {
+      background-color: #fffacd;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+    
+    .requirements {
+      background-color: #e9f7ef;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .btn-accept {
+      background-color: #28a745;
+      color: white;
+    }
+    
+    .btn-decline {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>ProxyEthica Connection Sharing</h1>
+  
+  <div class="consent-box">
+    <h2>What We're Asking</h2>
+    <p>We're asking for your consent to <span class="highlight">share a small portion of your unused internet bandwidth</span> to help power our residential proxy network. This helps other users access content that might be geographically restricted.</p>
+    
+    <h2>How It Works</h2>
+    <p>When you opt in:</p>
+    <ul>
+      <li>We'll only use your connection when your device is <strong>idle</strong></li>
+      <li>We'll only activate sharing when you're on <strong>WiFi</strong> (never mobile data)</li>
+      <li>We'll only use your connection when your device is <strong>charging</strong></li>
+      <li>We strictly limit bandwidth usage to <strong>100MB per day</strong> maximum</li>
+      <li>You can monitor usage and opt out at any time</li>
+    </ul>
+    
+    <h2>What You Get in Return</h2>
+    <div class="requirements">
+      <p>As a thank you for sharing your connection, you'll receive:</p>
+      <ul>
+        <li>Premium features in our application</li>
+        <li>Access to our own proxy network when you need it</li>
+        <li>Support for services that rely on a distributed network</li>
+      </ul>
+    </div>
+    
+    <h2>Privacy & Security</h2>
+    <p>We take your privacy seriously:</p>
+    <ul>
+      <li>All traffic through your connection is <strong>encrypted</strong></li>
+      <li>We don't store any browsing data on your device</li>
+      <li>We have strict content policies prohibiting illegal activities</li>
+      <li>We use advanced filtering to prevent malicious usage</li>
+    </ul>
+    
+    <h2>Your Control</h2>
+    <p>You have complete control:</p>
+    <ul>
+      <li>View real-time bandwidth usage in the app</li>
+      <li>Pause sharing anytime through settings</li>
+      <li>Set custom limits on when sharing is allowed</li>
+      <li>Opt out completely whenever you want</li>
+    </ul>
+  </div>
+  
+  <div class="actions">
+    <button id="decline-btn" class="btn-decline">Decline</button>
+    <button id="accept-btn" class="btn-accept">Accept & Continue</button>
+  </div>
+  
+  <script>
+    document.getElementById('accept-btn').addEventListener('click', function() {
+      window.parent.postMessage({ type: 'consent-response', consented: true }, '*');
+    });
+    
+    document.getElementById('decline-btn').addEventListener('click', function() {
+      window.parent.postMessage({ type: 'consent-response', consented: false }, '*');
+    });
+  </script>
+</body>
+</html> 
