@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "types": ["cypress", "node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "noEmit": true
+  },
+  "include": [
+    "**/*.ts", 
+    "**/*.js",
+    "integration/*.js",
+    "integration/*.ts",
+    "e2e/**/*.ts",
+    "e2e/**/*.js",
+    "support/**/*.ts",
+    "support/**/*.js"
+  ]
+}

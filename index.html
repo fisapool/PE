@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProxyEthica Network Dashboard</title>
+  <link rel="stylesheet" href="dashboard-styles.css">
+  <link rel="icon" href="icons/icon48.png">
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="main-header">
+      <div class="logo-container">
+        <img src="icons/icon128.png" alt="ProxyEthica Logo">
+        <h1>ProxyEthica Network</h1>
+      </div>
+      <div class="user-panel" id="user-info">
+        <span id="username-display">Guest</span>
+        <button id="login-button" class="btn primary">Login</button>
+        <button id="logout-button" class="btn danger hidden">Logout</button>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <!-- Login/Signup Form (shown when not logged in) -->
+      <section id="auth-section" class="auth-card">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="login">Login</button>
+          <button class="tab-btn" data-tab="signup">Sign Up</button>
+        </div>
+        
+        <div id="login-tab" class="tab-content active">
+          <h2>Login to Your Account</h2>
+          <form id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn primary full-width">Login</button>
+            <p class="form-message" id="login-message"></p>
+          </form>
+        </div>
+        
+        <div id="signup-tab" class="tab-content">
+          <h2>Create an Account</h2>
+          <form id="signup-form">
+            <div class="form-group">
+              <label for="signup-name">Full Name</label>
+              <input type="text" id="signup-name" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+              <label for="signup-email">Email</label>
+              <input type="email" id="signup-email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" required placeholder="Choose a strong password">
+            </div>
+            <div class="form-group">
+              <label for="signup-confirm">Confirm Password</label>
+              <input type="password" id="signup-confirm" required placeholder="Confirm your password">
+            </div>
+            <div class="form-group checkbox-group">
+              <input type="checkbox" id="terms-checkbox" required>
+              <label for="terms-checkbox">I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a></label>
+            </div>
+            <button type="submit" class="btn primary full-width">Create Account</button>
+            <p class="form-message" id="signup-message"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- Dashboard (shown when logged in) -->
+      <section id="dashboard-section" class="hidden">
+        <div class="dashboard-grid">
+          <!-- User Stats Panel -->
+          <div class="dashboard-card user-stats">
+            <h2>Your Account</h2>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-value" id="credit-balance">0</span>
+                <span class="stat-label">Available Credits</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="total-bandwidth">0 MB</span>
+                <span class="stat-label">Total Contribution</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="active-devices">0</span>
+                <span class="stat-label">Active Devices</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="account-tier">Free</span>
+                <span class="stat-label">Account Tier</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Get Proxy Panel -->
+          <div class="dashboard-card get-proxy">
+            <h2>Get Proxy Connection</h2>
+            <div class="proxy-form">
+              <div class="form-group">
+                <label for="proxy-country">Select Country</label>
+                <select id="proxy-country">
+                  <option value="">Any Location</option>
+                  <option value="US">United States</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="DE">Germany</option>
+                  <option value="FR">France</option>
+                  <option value="JP">Japan</option>
+                  <option value="CA">Canada</option>
+                  <option value="AU">Australia</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="proxy-type">Connection Type</label>
+                <select id="proxy-type">
+                  <option value="http">HTTP</option>
+                  <option value="https">HTTPS</option>
+                  <option value="socks">SOCKS5</option>
+                </select>
+              </div>
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="sticky-session">
+                <label for="sticky-session">Sticky Session (same IP for 1 hour)</label>
+              </div>
+              <button id="get-proxy-btn" class="btn primary full-width">Get Random Proxy</button>
+            </div>
+          </div>
+          
+          <!-- Current Proxy Panel -->
+          <div class="dashboard-card current-proxy">
+            <h2>Current Proxy</h2>
+            <div id="no-proxy-message">
+              <p>No active proxy connections. Click "Get Random Proxy" to start.</p>
+            </div>
+            <div id="proxy-details" class="hidden">
+              <div class="proxy-info">
+                <div class="info-row">
+                  <span class="info-label">IP Address:</span>
+                  <span class="info-value" id="proxy-ip">---.---.---.---</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Port:</span>
+                  <span class="info-value" id="proxy-port">----</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Username:</span>
+                  <span class="info-value" id="proxy-username">-----</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Password:</span>
+                  <span class="info-value" id="proxy-password">••••••••</span>
+                  <button id="show-password" class="btn mini secondary">Show</button>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Country:</span>
+                  <span class="info-value" id="proxy-location">--</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Status:</span>
+                  <span class="info-value" id="proxy-status">Inactive</span>
+                </div>
+              </div>
+              <div class="proxy-actions">
+                <button id="test-proxy-btn" class="btn secondary">Test Connection</button>
+                <button id="rotate-proxy-btn" class="btn primary">Rotate IP</button>
+                <button id="disconnect-proxy-btn" class="btn danger">Disconnect</button>
+              </div>
+              <div class="connection-string">
+                <h3>Connection String</h3>
+                <div class="code-block" id="connection-string">
+                  http://username:password@host:port
+                </div>
+                <button id="copy-connection" class="btn mini">Copy</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Proxy History Panel -->
+          <div class="dashboard-card proxy-history">
+            <h2>Recent Connections</h2>
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>IP Address</th>
+                  <th>Country</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <p class="copyright">© 2025 ProxyEthica FISAMY Network. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#terms">Terms of Service</a>
+          <a href="#privacy">Privacy Policy</a>
+          <a href="#contact">Contact Us</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html> 

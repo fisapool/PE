@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProxyEthica Integration Example</title>
+  <link rel="stylesheet" href="../src/client/dashboard.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    .app-section {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    .benefits-section {
+      background-color: #e9f7ef;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .premium-feature {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .premium-feature .icon {
+      margin-right: 10px;
+      color: #27ae60;
+      font-size: 1.2rem;
+    }
+    
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Example Application with ProxyEthica</h1>
+  
+  <div class="app-container">
+    <div class="app-section">
+      <h2>Your Premium Benefits</h2>
+      <p>By participating in our connection sharing program, you receive these premium features:</p>
+      
+      <div class="benefits-section">
+        <div class="premium-feature">
+          <span class="icon">✓</span> Unlimited access to premium content
+        </div>
+        <div class="premium-feature">
+          <span class="icon">✓</span> Higher quality streaming
+        </div>
+        <div class="premium-feature">
+          <span class="icon">✓</span> Early access to new features
+        </div>
+        <div class="premium-feature">
+          <span class="icon">✓</span> Ad-free experience
+        </div>
+      </div>
+    </div>
+    
+    <div id="proxy-dashboard-container"></div>
+  </div>
+  
+  <footer>
+    <p>ProxyEthica Example Application &copy; 2023</p>
+  </footer>
+  
+  <!-- Load required scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../dist/proxy-client-sdk.min.js"></script>
+  <script src="../src/client/dashboard.js"></script>
+  
+  <script>
+    // Initialize the SDK
+    const proxyClient = new ProxyClientSDK({
+      appId: 'example-app-id',
+      appKey: 'example-app-key',
+      serverUrl: 'https://api.proxyethica.com',
+      maxBandwidthMB: 100,
+      valueExchange: {
+        premiumFeatures: ['Ad-free content', 'Higher quality streaming', 'Priority support'],
+        estimatedValue: '$5 per month'
+      }
+    });
+    
+    // Initialize and render the dashboard
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Initialize the SDK
+        await proxyClient.initialize();
+        
+        // Create the dashboard
+        const dashboard = new ProxyDashboard('#proxy-dashboard-container', proxyClient);
+        
+        // Check for existing consent
+        const savedConsent = localStorage.getItem('proxy-consent');
+        if (savedConsent === 'true') {
+          await proxyClient.requestUserConsent({ consented: true });
+          
+          // Start sharing if conditions are met
+          if (proxyClient.checkDeviceConditions()) {
+            await proxyClient.startSharing();
+          }
+        }
+        
+        // Save consent when it changes
+        proxyClient.on('consent-changed', (data) => {
+          localStorage.setItem('proxy-consent', data.consented);
+        });
+        
+      } catch (error) {
+        console.error('Failed to initialize ProxyEthica:', error);
+      }
+    });
+  </script>
+</body>
+</html> 

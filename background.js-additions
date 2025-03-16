@@ -1,0 +1,62 @@
+// Add to background.js
+async function recordProxyUsage(proxyData) {
+  if (!userAccount.isLoggedIn) return;
+  
+  try {
+    const timestamp = new Date().toISOString();
+    const userId = userAccount.userId;
+    
+    // Create usage record
+    await addDoc(collection(db, "proxyUsage"), {
+      userId: userId,
+      timestamp: timestamp,
+      country: proxyData.country || 'Unknown',
+      duration: proxyData.duration || 0,
+      bytesTransferred: proxyData.bytesTransferred || 0,
+      creditsUsed: proxyData.creditsUsed || 1
+    });
+    
+    // Update user document to deduct credits
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const currentCredits = userData.credits || 0;
+      const creditsToDeduct = proxyData.creditsUsed || 1;
+      
+      if (currentCredits >= creditsToDeduct) {
+        await updateDoc(userRef, {
+          credits: currentCredits - creditsToDeduct,
+          lastProxyUsage: timestamp
+        });
+        
+        // Update local state
+        userAccount.contributionCredits = currentCredits - creditsToDeduct;
+        await updateStoredUserData();
+        
+        return {
+          success: true,
+          remainingCredits: currentCredits - creditsToDeduct
+        };
+      } else {
+        return {
+          success: false,
+          message: "Insufficient credits"
+        };
+      }
+    }
+    
+    return { success: false, message: "User document not found" };
+  } catch (error) {
+    console.error("Error recording proxy usage:", error);
+    return { success: false, message: error.message };
+  }
+}
+
+// Add to chrome.runtime.onMessage listener
+case 'recordProxyUsage':
+  recordProxyUsage(message.proxyData).then(result => {
+    sendResponse(result);
+  });
+  return true; 

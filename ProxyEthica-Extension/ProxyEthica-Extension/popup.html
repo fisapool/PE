@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProxyEthica</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="icons/icon48.png" alt="ProxyEthica Logo">
+      <h1>ProxyEthica Network</h1>
+    </header>
+
+    <div id="consent-screen" class="screen">
+      <h2>Join Our Ethical Proxy Network</h2>
+      <p>Help create a more open internet by sharing your unused bandwidth.</p>
+      
+      <div class="benefits">
+        <div class="benefit">
+          <span class="icon">🔒</span>
+          <span>Privacy First</span>
+        </div>
+        <div class="benefit">
+          <span class="icon">💰</span>
+          <span>Get Rewarded</span>
+        </div>
+        <div class="benefit">
+          <span class="icon">⚙️</span>
+          <span>Full Control</span>
+        </div>
+      </div>
+      
+      <p class="consent-text">
+        By opting in, you agree to share your internet connection only when:
+      </p>
+      <ul>
+        <li>You're connected to WiFi (not mobile data)</li>
+        <li>Your device is charging</li>
+        <li>You've set bandwidth limits that work for you</li>
+      </ul>
+      
+      <div class="actions">
+        <button id="opt-in-btn" class="btn primary">Opt In</button>
+        <button id="learn-more-btn" class="btn secondary">Learn More</button>
+      </div>
+    </div>
+
+    <div id="main-screen" class="screen hidden">
+      <div class="status-card">
+        <div class="status-indicator">
+          <span id="status-dot"></span>
+          <span id="status-text">Disconnected</span>
+        </div>
+        <button id="toggle-proxy" class="btn primary">Start Contributing</button>
+      </div>
+      
+      <div class="stats-card">
+        <h3>Statistics</h3>
+        <div class="stat-row">
+          <span>Bandwidth Used:</span>
+          <span id="bandwidth-used">0 MB</span>
+        </div>
+        <div class="stat-row">
+          <span>Contribution Time:</span>
+          <span id="contribution-time">0 min</span>
+        </div>
+        <div class="stat-row">
+          <span>Requests Served:</span>
+          <span id="requests-served">0</span>
+        </div>
+        <div class="stat-row">
+          <span>Current Connections:</span>
+          <span id="active-connections">0</span>
+        </div>
+      </div>
+      
+      <div class="settings-card">
+        <h3>Settings</h3>
+        <div class="setting-row">
+          <label for="max-bandwidth">Max Bandwidth</label>
+          <select id="max-bandwidth">
+            <option value="100">100 MB</option>
+            <option value="250">250 MB</option>
+            <option value="500">500 MB</option>
+            <option value="1000">1 GB</option>
+            <option value="unlimited">Unlimited</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label for="mobile-data">Allow on Mobile Data</label>
+          <input type="checkbox" id="mobile-data">
+        </div>
+        <div class="setting-row">
+          <label for="battery-mode">Allow on Battery</label>
+          <input type="checkbox" id="battery-mode">
+        </div>
+        <div class="setting-row">
+          <label for="max-connections">Max Connections</label>
+          <select id="max-connections">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="footer">
+        <button id="view-logs-btn" class="btn mini">View Logs</button>
+        <button id="settings-btn" class="btn mini">Advanced Settings</button>
+        <button id="opt-out-btn" class="btn mini danger">Opt Out</button>
+      </div>
+    </div>
+    
+    <div id="logs-screen" class="screen hidden">
+      <h2>Connection Logs</h2>
+      <div id="logs-container" class="logs">
+        <code id="logs"></code>
+      </div>
+      <button id="back-from-logs" class="btn secondary">Back</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

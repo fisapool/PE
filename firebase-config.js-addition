@@ -1,0 +1,24 @@
+import { authLimiter, proxyRequestLimiter } from './utils/rate-limiter.js';
+
+// Rate-limited versions of common operations
+export const limitedAuth = {
+  signIn: authLimiter.wrap(async (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  }),
+  
+  createUser: authLimiter.wrap(async (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  })
+};
+
+export const limitedFirestore = {
+  getDocument: proxyRequestLimiter.wrap(async (collectionName, docId) => {
+    const docRef = doc(db, collectionName, docId);
+    return getDoc(docRef);
+  }),
+  
+  setDocument: proxyRequestLimiter.wrap(async (collectionName, docId, data) => {
+    const docRef = doc(db, collectionName, docId);
+    return setDoc(docRef, data);
+  })
+}; 

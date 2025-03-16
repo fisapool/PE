@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Check if user is accessing their own data
+    function isUserOwned(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Validate credit amount is reasonable
+    function isValidCreditAmount(amount) {
+      return amount is number && amount >= 0 && amount <= 10000;
+    }
+    
+    // Rate limiting helper (max 50 writes per minute)
+    function isNotRateLimited() {
+      return request.time > get(/databases/$(database)/documents/users/$(request.auth.uid)/rateLimit/lastWrite).data.timestamp + duration.value(60, 's')
+        || get(/databases/$(database)/documents/users/$(request.auth.uid)/rateLimit/count).data.count < 50;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isUserOwned(userId);
+      allow create: if isAuthenticated();
+      allow update: if isUserOwned(userId) && 
+                     (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['credits'])) || 
+                     (request.resource.data.credits is number && 
+                      resource.data.credits is number &&
+                      isValidCreditAmount(request.resource.data.credits));
+      allow delete: if false; // Don't allow deletion
+    }
+    
+    // API Keys - highly secured
+    match /apiKeys/{userId} {
+      allow read: if isUserOwned(userId);
+      allow write: if false; // Only writable by admin or functions
+    }
+    
+    // Contributions - user can create and read their own
+    match /contributions/{contributionId} {
+      allow read: if isAuthenticated() && 
+                   resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+                     request.resource.data.userId == request.auth.uid && 
+                     isValidCreditAmount(request.resource.data.creditsEarned || 0);
+      allow update, delete: if false;
+    }
+    
+    // Proxy sessions
+    match /proxySessions/{sessionId} {
+      allow read: if isAuthenticated() && 
+                   resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+                     request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      allow delete: if isUserOwned(resource.data.userId);
+    }
+    
+    // Credit transactions - extra secure
+    match /creditTransactions/{transactionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create, update, delete: if false; // Only via server functions
+    }
+    
+    // System information
+    match /system/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+  }
+} 

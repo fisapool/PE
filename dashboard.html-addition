@@ -1,0 +1,5 @@
+<!-- Add near the footer -->
+<div class="version-badge">
+  <span class="firebase-version">Firebase v11.4.0</span>
+  <span class="app-version">ProxyEthica v1.0.0</span>
+</div> 

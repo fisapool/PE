@@ -1,0 +1,269 @@
+:root {
+  --primary: #3498db;
+  --primary-dark: #2980b9;
+  --secondary: #2ecc71;
+  --secondary-dark: #27ae60;
+  --danger: #e74c3c;
+  --danger-dark: #c0392b;
+  --text: #333333;
+  --text-light: #7f8c8d;
+  --bg: #ffffff;
+  --bg-alt: #f5f5f5;
+  --border: #e0e0e0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
+  background-color: var(--bg);
+  min-width: 300px;
+  max-width: 350px;
+}
+
+.container {
+  padding: 16px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+ul {
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+
+li {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-light);
+}
+
+.benefits {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.benefit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  flex: 1;
+}
+
+.benefit .icon {
+  font-size: 24px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn.primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn.secondary {
+  background-color: var(--bg-alt);
+  color: var(--text);
+}
+
+.btn.secondary:hover {
+  background-color: var(--border);
+}
+
+.btn.danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn.danger:hover {
+  background-color: var(--danger-dark);
+}
+
+.btn.mini {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: var(--bg-alt);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #e74c3c;
+}
+
+#status-dot.connected {
+  background-color: var(--secondary);
+}
+
+.stats-card, .settings-card {
+  padding: 16px;
+  background-color: var(--bg-alt);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-row, .setting-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+select, input[type="checkbox"] {
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.logs {
+  height: 200px;
+  overflow-y: auto;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.account-card, .proxy-card {
+  padding: 16px;
+  background-color: var(--bg-alt);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.login-form input {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.account-info {
+  margin-top: 12px;
+}
+
+.account-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+#current-proxy {
+  font-family: monospace;
+  font-size: 13px;
+}
+
+#proxy-status {
+  font-weight: 500;
+} 

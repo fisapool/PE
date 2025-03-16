@@ -1,0 +1,6 @@
+import { runFirebaseTest } from './firebase-test.js';
+
+// After initializing Firebase
+console.log('Testing Firebase integration...');
+const testResult = runFirebaseTest();
+console.log('Firebase test result:', testResult); 

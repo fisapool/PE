@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Test Extension",
+  "version": "1.0",
+  "description": "A simple test extension",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"]
+} 
