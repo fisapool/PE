@@ -122,4 +122,4 @@ offline, syncing when connection is restored.
 - **Authentication**: Login/signup in popup.html
 - **Profile Management**: Settings page
 - **Proxy Usage**: Background script for tracking
-- **Bandwidth Contribution**: Background script for recording # PE - Residential Proxy Extension
+- **Bandwidth Contribution**: Background script for recording
