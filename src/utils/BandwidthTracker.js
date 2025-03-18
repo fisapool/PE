@@ -9,123 +9,130 @@ class BandwidthTracker {
     this.sessionStats = new Map();
     this.dailyLimit = options.dailyLimit || 500; // MB
     this.sessionLimit = options.sessionLimit || 100; // MB
-    this.alertThreshold = options.alertThreshold || 0.8; // 80% of limit
+    this.alertThreshold = options.alertThreshold || 0.8;
+    this.ratePerGB = options.ratePerGB || 0.50; // $0.50 per GB
+    this.lastUpdate = Date.now();
     this.callbacks = {
       onLimitReached: options.onLimitReached || (() => {}),
-      onThresholdReached: options.onThresholdReached || (() => {})
+      onThresholdReached: options.onThresholdReached || (() => {}),
+      onEarningsUpdate: options.onEarningsUpdate || (() => {})
     };
   }
-  
-  /**
-   * Track data sent through proxy
-   * @param {string} sessionId - Session identifier
-   * @param {number} bytes - Number of bytes sent
-   */
-  trackSent(sessionId, bytes) {
-    this._trackUsage(sessionId, 'sent', bytes);
-  }
-  
-  /**
-   * Track data received through proxy
-   * @param {string} sessionId - Session identifier
-   * @param {number} bytes - Number of bytes received
-   */
-  trackReceived(sessionId, bytes) {
-    this._trackUsage(sessionId, 'received', bytes);
-  }
-  
-  /**
-   * Track request (combines sent and received)
-   * @param {string} sessionId - Session identifier
-   * @param {Object} request - Request details
-   * @param {Object} response - Response details
-   */
-  trackRequest(sessionId, request = {}, response = {}) {
-    // Get request size
-    const requestSize = request.data ? 
-      (typeof request.data === 'string' ? Buffer.byteLength(request.data, 'utf8') : 
-        Buffer.byteLength(JSON.stringify(request.data), 'utf8')) : 0;
-        
-    // Get response size
-    const responseSize = response.data ?
-      (typeof response.data === 'string' ? Buffer.byteLength(response.data, 'utf8') :
-        Buffer.byteLength(JSON.stringify(response.data), 'utf8')) : 0;
-    
-    // Track both directions
-    this.trackSent(sessionId, requestSize);
-    this.trackReceived(sessionId, responseSize);
-    
-    return {
-      sent: requestSize,
-      received: responseSize,
-      total: requestSize + responseSize
-    };
-  }
-  
-  /**
-   * Internal method to track usage in a specific direction
-   * @private
-   * @param {string} sessionId - Session identifier
-   * @param {string} direction - 'sent' or 'received'
-   * @param {number} bytes - Number of bytes
-   */
-  _trackUsage(sessionId, direction, bytes) {
-    if (!sessionId) return;
-    
+
+  trackUsage(sessionId, bytes, direction = 'both') {
+    const timestamp = Date.now();
     const bytesInMB = bytes / (1024 * 1024);
     const today = new Date().toISOString().split('T')[0];
-    
-    // Update daily statistics
+
+    // Update real-time stats
+    this._updateRealTimeStats(sessionId, bytesInMB, timestamp);
+
+    // Update daily stats
     if (!this.usageLog.has(today)) {
       this.usageLog.set(today, {
         sent: 0,
         received: 0,
         total: 0,
+        earnings: 0,
         sessions: new Map()
       });
     }
-    
+
     const dayStats = this.usageLog.get(today);
-    dayStats[direction] += bytesInMB;
+    if (direction === 'both' || direction === 'sent') {
+      dayStats.sent += bytesInMB;
+    }
+    if (direction === 'both' || direction === 'received') {
+      dayStats.received += bytesInMB;
+    }
+
     dayStats.total = dayStats.sent + dayStats.received;
-    
-    if (!dayStats.sessions.has(sessionId)) {
-      dayStats.sessions.set(sessionId, { sent: 0, received: 0, total: 0 });
-    }
-    
-    const sessionDayStats = dayStats.sessions.get(sessionId);
-    sessionDayStats[direction] += bytesInMB;
-    sessionDayStats.total = sessionDayStats.sent + sessionDayStats.received;
-    
-    // Update session statistics
+    dayStats.earnings = this._calculateEarnings(dayStats.total);
+
+    // Update session stats
     if (!this.sessionStats.has(sessionId)) {
-      this.sessionStats.set(sessionId, { sent: 0, received: 0, total: 0 });
+      this.sessionStats.set(sessionId, {
+        sent: 0,
+        received: 0,
+        total: 0,
+        earnings: 0,
+        startTime: timestamp,
+        lastUpdate: timestamp
+      });
     }
-    
+
     const sessionStats = this.sessionStats.get(sessionId);
-    sessionStats[direction] += bytesInMB;
+    if (direction === 'both' || direction === 'sent') {
+      sessionStats.sent += bytesInMB;
+    }
+    if (direction === 'both' || direction === 'received') {
+      sessionStats.received += bytesInMB;
+    }
+
     sessionStats.total = sessionStats.sent + sessionStats.received;
+    sessionStats.earnings = this._calculateEarnings(sessionStats.total);
+    sessionStats.lastUpdate = timestamp;
+
+    // Check limits and trigger callbacks
+    this._checkLimitsAndNotify(sessionId);
+
+    // Notify earnings update
+    this.callbacks.onEarningsUpdate({
+      daily: dayStats.earnings,
+      session: sessionStats.earnings
+    });
   }
-  
-  /**
-   * Check if any bandwidth limits have been exceeded
-   * @param {string} sessionId - Optional session ID to check
-   * @returns {Object} - Limit status
-   */
+
+  _updateRealTimeStats(sessionId, bytesInMB, timestamp) {
+    const timeDiff = (timestamp - this.lastUpdate) / 1000; // Convert to seconds
+    const bytesPerSecond = bytesInMB * 1024 * 1024 / timeDiff;
+
+    this.currentSpeed = bytesPerSecond;
+    this.lastUpdate = timestamp;
+  }
+
+  _calculateEarnings(totalMB) {
+    return (totalMB / 1024) * this.ratePerGB; // Convert MB to GB and multiply by rate
+  }
+
+  getRealTimeStats() {
+    return {
+      currentSpeed: this.currentSpeed || 0,
+      lastUpdate: this.lastUpdate
+    };
+  }
+
+  getEarningsSummary() {
+    const today = new Date().toISOString().split('T')[0];
+    const dayStats = this.usageLog.get(today) || { earnings: 0 };
+
+    let totalEarnings = 0;
+    for (const [date, stats] of this.usageLog) {
+      totalEarnings += stats.earnings;
+    }
+
+    return {
+      daily: dayStats.earnings,
+      total: totalEarnings,
+      sessionsActive: this.sessionStats.size
+    };
+  }
+
   checkLimits(sessionId) {
     const today = new Date().toISOString().split('T')[0];
-    const dayStats = this.usageLog.get(today) || { total: 0 };
-    
+    const dayStats = this.usageLog.get(today) || { total: 0, earnings: 0 };
+
     const result = {
       exceeded: false,
       threshold: false,
       daily: {
         usage: dayStats.total,
         limit: this.dailyLimit,
-        percent: (dayStats.total / this.dailyLimit) * 100
+        percent: (dayStats.total / this.dailyLimit) * 100,
+        earnings: dayStats.earnings
       }
     };
-    
+
     // Check daily limits
     if (dayStats.total >= this.dailyLimit) {
       result.exceeded = true;
@@ -134,17 +141,18 @@ class BandwidthTracker {
       result.threshold = true;
       this.callbacks.onThresholdReached('daily', dayStats.total);
     }
-    
+
     // Check session limits if a session ID is provided
     if (sessionId && this.sessionStats.has(sessionId)) {
       const sessionStats = this.sessionStats.get(sessionId);
-      
+
       result.session = {
         usage: sessionStats.total,
         limit: this.sessionLimit,
-        percent: (sessionStats.total / this.sessionLimit) * 100
+        percent: (sessionStats.total / this.sessionLimit) * 100,
+        earnings: sessionStats.earnings
       };
-      
+
       if (sessionStats.total >= this.sessionLimit) {
         result.exceeded = true;
         this.callbacks.onLimitReached('session', sessionStats.total, sessionId);
@@ -153,35 +161,21 @@ class BandwidthTracker {
         this.callbacks.onThresholdReached('session', sessionStats.total, sessionId);
       }
     }
-    
+
     return result;
   }
-  
-  /**
-   * Get statistics for a specific session
-   * @param {string} sessionId - Session identifier
-   * @returns {Object|null} - Session statistics
-   */
+
   getSessionStats(sessionId) {
     return this.sessionStats.get(sessionId) || null;
   }
-  
-  /**
-   * Get daily usage statistics
-   * @param {string} date - Date in YYYY-MM-DD format
-   * @returns {Object} - Daily statistics
-   */
+
   getDailyStats(date = new Date().toISOString().split('T')[0]) {
-    return this.usageLog.get(date) || { sent: 0, received: 0, total: 0, sessions: new Map() };
+    return this.usageLog.get(date) || { sent: 0, received: 0, total: 0, earnings: 0, sessions: new Map() };
   }
-  
-  /**
-   * Clear statistics for a specific session
-   * @param {string} sessionId - Session identifier
-   */
+
   clearSessionStats(sessionId) {
     this.sessionStats.delete(sessionId);
-    
+
     // Also clear from daily logs
     for (const [date, stats] of this.usageLog.entries()) {
       if (stats.sessions.has(sessionId)) {
@@ -189,14 +183,19 @@ class BandwidthTracker {
       }
     }
   }
-  
-  /**
-   * Reset all statistics
-   */
+
   reset() {
     this.usageLog.clear();
     this.sessionStats.clear();
   }
+  _checkLimitsAndNotify(sessionId) {
+    const limits = this.checkLimits(sessionId);
+    if (limits.exceeded) {
+      console.warn("Bandwidth limit exceeded!");
+    } else if (limits.threshold) {
+      console.warn("Approaching bandwidth threshold!");
+    }
+  }
 }
 
-module.exports = BandwidthTracker; 
+module.exports = BandwidthTracker;
