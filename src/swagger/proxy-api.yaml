@@ -1,0 +1,62 @@
+
+openapi: 3.0.0
+info:
+  title: ProxyEthica API
+  version: 1.0.0
+  description: API for managing residential proxies
+
+paths:
+  /api/proxy/list:
+    get:
+      summary: Get available proxies
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: List of available proxies
+        '429':
+          description: Rate limit exceeded
+
+  /api/proxy/stats/{proxyId}:
+    get:
+      summary: Get proxy statistics
+      parameters:
+        - name: proxyId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Proxy statistics
+        '429':
+          description: Rate limit exceeded
+
+  /api/proxy/rotate:
+    post:
+      summary: Rotate to new proxy
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentProxyId:
+                  type: string
+      responses:
+        '200':
+          description: New proxy assigned
+        '429':
+          description: Rate limit exceeded
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
