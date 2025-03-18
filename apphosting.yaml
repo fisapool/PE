@@ -1,27 +1,24 @@
 
-runtime: nodejs18
-instance_class: F2
+runtime: nodejs16
+service: proxy-network
 
 automatic_scaling:
   target_cpu_utilization: 0.65
-  min_instances: 2
+  min_instances: 1
   max_instances: 10
 
-handlers:
-  - url: /static
-    static_dir: build/static
-    secure: always
+network:
+  session_affinity: true
+  forwarded_ports:
+    - 80:8080
+    - 443:8443
 
-  - url: /(.*\.(json|ico|js|css))$
-    static_files: build/\1
-    upload: build/.*\.(json|ico|js|css)$
-    secure: always
-
-  - url: /.*
-    static_files: build/index.html
-    upload: build/index.html
-    secure: always
+regions:
+  - us-east1
+  - us-west1
+  - europe-west1
+  - asia-east1
 
 env_variables:
-  NODE_ENV: 'production'
-  FIREBASE_PROJECT_ID: 'proxyethica'
+  NODE_ENV: "production"
+  PROXY_SERVICE_VERSION: "1.0"
