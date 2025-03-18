@@ -116,3 +116,38 @@ class RotatingProxyList {
 }
 
 module.exports = RotatingProxyList;
+class RotatingProxyList {
+  constructor(options = {}) {
+    this.proxyList = [];
+    this.currentIndex = 0;
+    this.rotationInterval = options.rotationInterval || 300000; // 5min
+    this.lastRotation = Date.now();
+  }
+
+  addProxy(proxy) {
+    this.proxyList.push(proxy);
+  }
+
+  getCurrentProxy() {
+    if (this.proxyList.length === 0) return null;
+    return this.proxyList[this.currentIndex];
+  }
+
+  rotate() {
+    if (this.proxyList.length <= 1) return null;
+    this.currentIndex = (this.currentIndex + 1) % this.proxyList.length;
+    this.lastRotation = Date.now();
+    return this.getCurrentProxy();
+  }
+
+  shouldRotate() {
+    return Date.now() - this.lastRotation >= this.rotationInterval;
+  }
+
+  clear() {
+    this.proxyList = [];
+    this.currentIndex = 0;
+  }
+}
+
+module.exports = RotatingProxyList;

@@ -32,11 +32,25 @@ try {
   console.error("Error testing Firebase imports:", error);
 }
 
-// Simple state management
+const BandwidthTracker = require('./utils/BandwidthTracker');
+const RotatingProxyList = require('./utils/RotatingProxyList');
+
+const bandwidthTracker = new BandwidthTracker({
+  maxBandwidth: 1000, // 1GB default limit
+  idleTimeout: 300000 // 5min idle timeout
+});
+
+const proxyRotator = new RotatingProxyList({
+  rotationInterval: 300000 // 5min rotation
+});
+
+// Enhanced state management
 const connectionStatus = {
   isContributing: false,
   startTime: null,
-  bandwidthUsed: 0
+  bandwidthUsed: 0,
+  tracker: bandwidthTracker,
+  rotator: proxyRotator
 };
 
 // User account management
