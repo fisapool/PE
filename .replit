@@ -26,3 +26,12 @@ args = "npm test"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node scripts/verify-deployment.js"
+
+[[workflows.workflow]]
+name = "Monitor"
+author = 40630735
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node src/services/MonitoringService.js"
