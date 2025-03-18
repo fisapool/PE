@@ -29,7 +29,6 @@ enableIndexedDbPersistence(db)
   });
 
 export default firebaseConfig;
-export { app, auth, db };
 
 // For development in Chrome extension, use localhost emulator
 if (process.env.NODE_ENV === 'development') {
