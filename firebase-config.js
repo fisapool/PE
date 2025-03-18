@@ -30,6 +30,12 @@ enableIndexedDbPersistence(db)
 
 export default firebaseConfig;
 
+// Import Firebase Functions
+import { getFunctions } from 'firebase/functions';
+
+// Initialize Firebase Functions
+const functions = getFunctions(app);
+
 // For development in Chrome extension, use localhost emulator
 if (process.env.NODE_ENV === 'development') {
   auth.useEmulator('http://localhost:9099');
