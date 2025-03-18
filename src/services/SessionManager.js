@@ -242,3 +242,48 @@ class SessionManager {
 
 module.exports = SessionManager;
 
+const { db } = require('../firebase-module');
+const { v4: uuidv4 } = require('uuid');
+
+class SessionManager {
+  constructor() {
+    this.activeSessions = new Map();
+  }
+
+  async createSession(userId, locationData) {
+    const sessionId = uuidv4();
+    const session = {
+      id: sessionId,
+      userId,
+      location: locationData,
+      startTime: Date.now(),
+      lastActivity: Date.now(),
+      status: 'active'
+    };
+
+    await setDoc(doc(db, 'sessions', sessionId), {
+      ...session,
+      createdAt: serverTimestamp()
+    });
+
+    this.activeSessions.set(sessionId, session);
+    return sessionId;
+  }
+
+  async endSession(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      await updateDoc(doc(db, 'sessions', sessionId), {
+        status: 'ended',
+        endTime: serverTimestamp()
+      });
+      this.activeSessions.delete(sessionId);
+    }
+  }
+
+  getActiveSession(sessionId) {
+    return this.activeSessions.get(sessionId);
+  }
+}
+
+module.exports = new SessionManager();

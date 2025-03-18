@@ -5,8 +5,10 @@ import {
   createUserWithEmailAndPassword, 
   signInWithPopup,
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  getIdToken
 } from 'firebase/auth';
+import { doc, setDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { app, auth, db, googleProvider, githubProvider } from './src/firebase-module.js';
 
