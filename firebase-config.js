@@ -1,8 +1,10 @@
+
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
-// Firebase configuration for ProxyEthica
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyATMS402xUExbNHEYAsdzDIwgbL2Ee11RM",
   authDomain: "proxyethica.firebaseapp.com",
@@ -17,6 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const functions = getFunctions(app);
 
 // Enable offline persistence
 enableIndexedDbPersistence(db)
@@ -28,20 +31,12 @@ enableIndexedDbPersistence(db)
     }
   });
 
-export default firebaseConfig;
-
-// Import Firebase Functions
-import { getFunctions } from 'firebase/functions';
-
-// Initialize Firebase Functions
-const functions = getFunctions(app);
-
-// For development in Chrome extension, use localhost emulator
+// Development environment configuration
 if (process.env.NODE_ENV === 'development') {
-  auth.useEmulator('http://localhost:9099');
-  db.useEmulator('localhost', 8080);
-  functions.useEmulator('localhost', 5001);
+  auth.useEmulator('http://0.0.0.0:9099');
+  db.useEmulator('0.0.0.0', 8080);
+  connectFunctionsEmulator(functions, '0.0.0.0', 5001);
 }
 
-// Export the initialized Firebase services
-export { app, auth, db, functions }; 
+export { app, auth, db, functions };
+export default firebaseConfig;
