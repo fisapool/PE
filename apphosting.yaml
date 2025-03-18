@@ -17,6 +17,10 @@ handlers:
     upload: build/index.html
     secure: always
 
+  - url: /api/v1/proxy/devices/rotation/stop
+    secure: always
+    script: auto
+
 env_variables:
   NODE_ENV: 'production'
   FIREBASE_PROJECT_ID: 'proxyethica' 
