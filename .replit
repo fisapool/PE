@@ -5,4 +5,24 @@ run = "npm run dev"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["sh", "-c", "node src/server/index.js"]
+build = ["sh", "-c", "npm run build"]
+
+[workflows]
+
+[[workflows.workflow]]
+name = "Deploy"
+author = 40630735
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm test"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node scripts/verify-deployment.js"
