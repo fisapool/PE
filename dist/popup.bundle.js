@@ -15,7 +15,7 @@
   \****************************/
 /***/ (() => {
 
-eval("throw new Error(\"Module parse failed: Duplicate export 'app' (42:9)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n| \\n| // Export the initialized Firebase services\\n> export { app, auth, db, functions }; \");\n\n//# sourceURL=webpack://proxyethica/./firebase-config.js?");
+eval("throw new Error(\"Module parse failed: Export 'functions' is not defined (41:24)\\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\\n| \\n| // Export the initialized Firebase services\\n> export { app, auth, db, functions }; \");\n\n//# sourceURL=webpack://proxyethica/./firebase-config.js?");
 
 /***/ }),
 
