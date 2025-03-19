@@ -1,21 +1,17 @@
-// Central Firebase configuration file
+
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions } from 'firebase/functions';
+import firebaseConfig from '../firebase-config.js';
 
-// Your Firebase configuration
-const firebaseConfig = {
-  apiKey: "your-actual-api-key",
-  authDomain: "proxyethica.firebaseapp.com",
-  projectId: "proxyethica",
-  storageBucket: "proxyethica.appspot.com",
-  messagingSenderId: "your-actual-sender-id",
-  appId: "your-actual-app-id"
-};
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const functions = getFunctions(app);
 
-export { app, auth, db }; 
+// Initialize providers
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+export { app, auth, db, functions, googleProvider, githubProvider };

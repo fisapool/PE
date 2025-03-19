@@ -1,91 +1,103 @@
+
 import { 
   getAuth, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
+  signInWithPopup,
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  getIdToken
 } from 'firebase/auth';
-import { 
-  getFirestore, 
-  doc, 
-  getDoc, 
-  setDoc 
-} from 'firebase/firestore';
-import { app } from './firebase-config.js';
+import { doc, setDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { app, auth, db, googleProvider, githubProvider } from './src/firebase-module.js';
 
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// User authentication
+// Email/Password authentication
 export async function loginUser(email, password) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return { 
-      success: true, 
-      user: userCredential.user 
-    };
+    await updateUserSession(userCredential.user);
+    return { success: true, user: userCredential.user };
   } catch (error) {
     console.error("Login error:", error);
-    return { 
-      success: false, 
-      message: error.message 
-    };
+    return { success: false, message: error.message };
   }
 }
 
-// Other auth functions
 export async function registerUser(email, password) {
   try {
-    // Create user in Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Create initial user document in Firestore
-    const userRef = doc(db, "users", user.uid);
+    await initializeUserData(user);
+    await updateUserSession(user);
+    
+    return { success: true, user };
+  } catch (error) {
+    console.error("Registration error:", error);
+    return { success: false, message: error.message };
+  }
+}
+
+// OAuth authentication
+export async function signInWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    await initializeUserData(result.user);
+    await updateUserSession(result.user);
+    return { success: true, user: result.user };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function signInWithGithub() {
+  try {
+    const result = await signInWithPopup(auth, githubProvider);
+    await initializeUserData(result.user);
+    await updateUserSession(result.user);
+    return { success: true, user: result.user };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+}
+
+// Session management
+async function updateUserSession(user) {
+  const session = {
+    uid: user.uid,
+    email: user.email,
+    lastLogin: new Date().toISOString()
+  };
+  localStorage.setItem('userSession', JSON.stringify(session));
+}
+
+// User data initialization
+async function initializeUserData(user) {
+  const userRef = doc(db, "users", user.uid);
+  const userDoc = await getDoc(userRef);
+  
+  if (!userDoc.exists()) {
     await setDoc(userRef, {
       email: user.email,
       createdAt: new Date().toISOString(),
-      credits: 100, // Starting credits
+      credits: 100,
       contribution: {
         totalBandwidth: 0,
         lastContribution: null
       }
     });
-    
-    // Generate API key and store it separately for security
-    const apiKey = generateSecureApiKey();
-    const apiKeyRef = doc(db, "apiKeys", user.uid);
-    await setDoc(apiKeyRef, {
-      key: apiKey,
-      createdAt: new Date().toISOString()
-    });
-    
-    return {
-      success: true,
-      userId: user.uid,
-      email: user.email
-    };
-  } catch (error) {
-    console.error("Registration error:", error);
-    return {
-      success: false,
-      message: error.message
-    };
   }
-}
-
-// Helper function to generate a secure API key
-function generateSecureApiKey() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let key = '';
-  for (let i = 0; i < 32; i++) {
-    key += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return key;
 }
 
 export async function logoutUser() {
-  // Implementation
+  try {
+    await signOut(auth);
+    localStorage.removeItem('userSession');
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
 }
 
 export function getCurrentUser() {
@@ -94,4 +106,4 @@ export function getCurrentUser() {
 
 export function onAuthStateChange(callback) {
   return onAuthStateChanged(auth, callback);
-} 
+}

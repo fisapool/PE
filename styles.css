@@ -1,3 +1,50 @@
+
+.auth-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.oauth-section {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.oauth-button {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.oauth-button.google {
+  background-color: #fff;
+  color: #757575;
+}
+
+.oauth-button.github {
+  background-color: #24292e;
+  color: #fff;
+}
+
+.error {
+  color: #d32f2f;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
 :root {
   --primary: #3498db;
   --primary-dark: #2980b9;

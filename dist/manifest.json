@@ -1,10 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "ProxyEthica Network",
+  "name": "ProxyEthica FISAMY Network",
   "version": "1.0.0",
-  "description": "An ethical proxy network extension",
+  "description": "Ethical residential proxy network with user consent. © 2025 ProxyEthica FISAMY Network.",
+  "permissions": [
+    "storage",
+    "webRequest",
+    "proxy",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://*.firebaseio.com/*",
+    "https://*.firebaseapp.com/*",
+    "https://*.googleapis.com/*",
+    "<all_urls>"
+  ],
   "background": {
-    "service_worker": "background-loader.js"
+    "service_worker": "background.bundle.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "action": {
     "default_popup": "popup.html",
@@ -14,22 +30,9 @@
       "128": "icons/icon128.png"
     }
   },
-  "permissions": [
-    "storage",
-    "proxy",
-    "webRequest",
-    "webNavigation",
-    "tabs"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  },
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   }
-} 
+}
